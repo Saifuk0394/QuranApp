@@ -216,7 +216,7 @@ class QuranViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val exists = khatmDao.isSurahRead(surahNumber)
             if (exists) {
-                khatmDao.updateLastRead(surahNumber)
+                khatmDao.updateLastRead(surahNumber, System.currentTimeMillis())
             } else {
                 khatmDao.markSurahRead(SurahReadEntity(surahNumber))
             }

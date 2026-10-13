@@ -12,7 +12,7 @@ interface KhatmDao {
     suspend fun markSurahRead(entry: SurahReadEntity)
 
     @Query("UPDATE surah_read_log SET lastReadAt = :timestamp WHERE surahNumber = :surahNumber")
-    suspend fun updateLastRead(surahNumber: Int, timestamp: Long = System.currentTimeMillis())
+    suspend fun updateLastRead(surahNumber: Int, timestamp: Long)
 
     @Query("SELECT surahNumber FROM surah_read_log")
     fun getReadSurahs(): Flow<List<Int>>
