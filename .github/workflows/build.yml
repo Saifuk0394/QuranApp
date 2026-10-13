@@ -37,17 +37,18 @@ jobs:
           ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build-debug.log
           exit ${PIPESTATUS[0]}
 
-      - name: Show build errors in summary
+      - name: Show build errors as annotations
         if: failure()
         run: |
-          echo "## Build Error Log" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          grep -E "error:|ERROR:|e:.*\.kt|warning:.*error|FAILED|Exception" build-debug.log | head -100 >> $GITHUB_STEP_SUMMARY || true
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "### Last 200 lines" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -200 build-debug.log >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          # Print errors as GitHub annotations (visible in gh api annotations endpoint)
+          grep -E "^e: |error: " build-debug.log | head -50 | while IFS= read -r line; do
+            echo "::error::$line"
+          done
+          # Also print last 100 lines to stdout for gh run view
+          echo "=== LAST 100 LINES OF BUILD LOG ==="
+          tail -100 build-debug.log
+          echo "=== KOTLIN ERRORS ==="
+          grep -E "^e: |error: |ERROR " build-debug.log | head -50 || echo "No error lines matched"
 
       - name: Build release APK (unsigned)
         run: ./gradlew assembleRelease --no-daemon
