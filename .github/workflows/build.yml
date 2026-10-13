@@ -37,13 +37,17 @@ jobs:
           ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build-debug.log
           exit ${PIPESTATUS[0]}
 
-      - name: Upload build log on failure
+      - name: Show build errors in summary
         if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log-${{ github.sha }}
-          path: build-debug.log
-          retention-days: 7
+        run: |
+          echo "## Build Error Log" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          grep -E "error:|ERROR:|e:.*\.kt|warning:.*error|FAILED|Exception" build-debug.log | head -100 >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "### Last 200 lines" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          tail -200 build-debug.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Build release APK (unsigned)
         run: ./gradlew assembleRelease --no-daemon
