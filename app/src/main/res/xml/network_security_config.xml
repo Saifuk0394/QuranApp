@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- Quran API -->
+        <domain includeSubdomains="true">api.alquran.cloud</domain>
+        <!-- Hadith API (jsDelivr CDN) -->
+        <domain includeSubdomains="true">cdn.jsdelivr.net</domain>
+    </domain-config>
+</network-security-config>
