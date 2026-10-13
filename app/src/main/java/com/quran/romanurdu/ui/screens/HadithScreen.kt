@@ -230,9 +230,12 @@ private fun LanguageTabRow(
         indicator = { tabPositions ->
             val index = HadithLanguage.entries.indexOf(selected)
             if (index >= 0 && index < tabPositions.size) {
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[index], matchContentSize = false),
-                    color = QuranGold
+                Box(
+                    Modifier
+                        .tabIndicatorOffset(tabPositions[index])
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(QuranGold)
                 )
             }
         }
